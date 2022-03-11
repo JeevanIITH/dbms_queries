@@ -1,0 +1,11 @@
+select p.cited_index,p.index,rp_v.title,rp_v.main_author,rp_v.venue, rp_v.year
+		from paper_cited as p
+		left join
+			(	select rp.index, rp.title ,rp.main_author, v.venue , v.year
+				from researchpapers as rp 
+				left join rp_venues as v
+				on v.index= rp.index
+			) as rp_v
+		on rp_v.index=p.index
+		where p.cited_index is not null
+		order by p.cited_index
