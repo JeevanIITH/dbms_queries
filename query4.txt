@@ -1,0 +1,17 @@
+SELECT
+RANK() OVER (ORDER BY p_count.no_of_times DESC) ranks, p_count.cited_index, p_count.no_of_times, rp.title, rp.main_author, rp_venues.venue, rp_venues.year, rp.abstract
+FROM (
+		(	SELECT p_c.cited_index, COUNT(*) AS no_of_times
+			FROM paper_cited AS p_c
+			WHERE NOT (p_c.cited_index = 'NULL')
+			GROUP BY (p_c.cited_index)
+			ORDER BY p_c.cited_index
+		) AS p_count
+		LEFT JOIN researchpapers AS rp
+		ON CAST(p_count.cited_index AS BIGINT) = rp.index
+	)
+	LEFT JOIN rp_venues
+	ON CAST(p_count.cited_index AS BIGINT) = rp_venues.index
+	
+LIMIT 20
+;
