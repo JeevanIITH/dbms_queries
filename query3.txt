@@ -1,17 +1,17 @@
-SELECT rp.index, rp2.index AS index_2,
-	rp.title, rp2.title AS title_2,
-	rp.main_author, rp2.main_author AS main_author_2,
-	rp1_venues.venue, rp2_venues.venue AS venue_2,
-	rp1_venues.year, rp2_venues.year AS year_2,
-	rp.abstract, rp2.abstract AS abstract_2
+SELECT pc2.index AS index_x, pc.index AS index_y, rp.index AS index_z,
+	rp2.title, rp.title AS title_2,
+	rp2.main_author, rp.main_author AS main_author_2,
+	rp2_venues.venue, rp1_venues.venue AS venue_2,
+	rp2_venues.year, rp1_venues.year AS year_2,
+	rp2.abstract, rp.abstract AS abstract_2
 FROM(
-	  (
+	  	(
 			(
 				(
 					(
 						researchpapers as rp
 						LEFT JOIN paper_cited AS pc
-						ON rp.index = pc.index
+						ON CAST(pc.cited_index AS BIGINT) = rp.index
 					)
 					LEFT JOIN rp_venues AS rp1_venues
 					ON rp.index = rp1_venues.index
@@ -20,10 +20,10 @@ FROM(
 				ON CAST(pc2.cited_index AS BIGINT) = pc.index
 			)
 			LEFT JOIN researchpapers as rp2
-			ON CAST(pc.cited_index AS BIGINT) = rp2.index
+			ON CAST(pc2.index AS BIGINT) = rp2.index
 		)
 		LEFT JOIN rp_venues AS rp2_venues
 		ON rp2.index = rp2_venues.index
 )
 WHERE NOT (pc.cited_index = 'NULL') AND NOT (pc2.cited_index = 'NULL')
-;
+ORDER BY pc2.index
